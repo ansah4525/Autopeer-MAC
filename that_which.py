@@ -40,6 +40,9 @@ class WhichVsThatChecker:
             if len(sentences) < 3:  # skip very short paragraphs
                 continue  
 
+            paragraph_flagged = False
+            para_sentences = []
+
             for sentence in sentences:
                 sentence = sentence.strip()
                 if not sentence:
@@ -63,23 +66,25 @@ class WhichVsThatChecker:
                         count=1
                     )
 
-                    gather_all.append(f"{sentence_number}. {highlighted}.<br><br>")
+                    para_sentences.append(f"{sentence_number}. {highlighted}.<br><br>")
                     issues_found_counter += 1
                     sentence_number += 1
+                    paragraph_flagged = True
                     break  # one flag per sentence
+
+            if paragraph_flagged:
+                gather_all.append(f"<b>{para}</b><br><br>")  # bold paragraph
+                gather_all.extend(para_sentences)
 
         if issues_found_counter > 0:
             explanation = (
-                "This check flags potential overuse of 'which' where alternatives like 'that' may be more suitable.<br>"
-                "It excludes quotations, comma-which phrases, and prepositional forms (e.g., 'in which').<br><br>"
+                
                 "Click ‘Explanations’ on the Auto-Peer menu if you need further information.<br>"
             )
             return {
                 "issues_found_counter": issues_found_counter,
-                "issues_para": (
-                    "<b>Auto-Peer: THAT vs comma-WHICH</b><br><br>" +
-                    "".join(gather_all) + explanation
-                )
+                "issues_para": "<b>Auto-Peer: THAT vs comma-WHICH</b><br><br>" +
+                               "".join(gather_all) + explanation
             }
         else:
             return {"issues_found_counter": 0, "issues_para": "No issues identified."}

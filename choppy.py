@@ -8,8 +8,12 @@ class ChoppySentenceChecker:
 
     def analyze_text(self, text: str, custom_no_sent: int = 10) -> Dict[str, str]:
         """
-        Analyze text for choppy sentences (short sentences that may weaken flow).
-        Flags sentences shorter than a specified word count.
+        Logic:
+        - Uses word count (< custom_no_sent) to flag choppy sentences.
+        - Skips first/last sentences of paragraphs with <3 sentences.
+        - Uses word-boundary checks for valid_words to avoid false positives.
+        - Returns flagged paragraphs when issues_found > 0.
+        - Highlights the choppy sentence in red, bolds the full paragraph.
         """
         self.issues_found = 0
         self.flagged = []
@@ -17,51 +21,40 @@ class ChoppySentenceChecker:
 
         valid_words = [
             "also", "this", "these", "that", "those", "and", "but", "so", "because", 
-            "which", "as", "since", "yet", "still", "already", ",", ";", ":", "!", 
-            "?", "”", "“", "(", "["
+            "which", "as", "since", "yet", "still", "already"
         ]
+        punct_tokens = {",", ";", ":", "!", "?", "”", "“", "(", "["}
 
-        # Split text into paragraphs
-        all_paragraphs = text.split("\n")
+        paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
 
-        # Filter valid paragraphs (with at least 2 sentences and not empty)
-        all_paragraphs = [
-            p for p in all_paragraphs if len(p.split(".")) > 1 and p.strip()
-        ]
+        for paragraph in paragraphs:
+            sentences = re.split(r'(?<=[.!?])\s+', paragraph)
+            if len(sentences) < 3:
+                continue
 
-        for paragraph in all_paragraphs:
-            sentences = re.split(r'(?<=[.!?])\s+', paragraph.strip())
+            for sentence in sentences[1:-1]:
+                words = [w.strip(".,;:()[]\"'") for w in sentence.split() if w.strip()]
+                if len(words) < custom_no_sent:
+                    lower_sent = sentence.lower()
+                    contains_valid = any(re.search(r'\b' + re.escape(w) + r'\b', lower_sent) for w in valid_words)
+                    contains_punct = any(p in sentence for p in punct_tokens)
 
-            # Skip paragraphs with less than 3 sentences
-            if len(sentences) > 2:
-                # Ignore the first and last sentence of each paragraph
-                for sentence in sentences[1:-1]:
-                    if len(sentence) > custom_no_sent:
-                        words = sentence.split()
+                    if contains_valid or contains_punct:
+                        continue
 
-                        if len(words) < 10:  # Flag short sentences
-                            error_found = True
-                            for word in valid_words:
-                                if word in sentence:
-                                    error_found = False
-                                    break
+                    # It's choppy -> record it
+                    self.issues_found += 1
+                    red_text = f"<span style='color:red'>{sentence.strip()}</span>"
+                    highlighted_para = paragraph.replace(sentence, red_text)
+                    # Bold the entire paragraph, with only choppy sentence in red
+                    self.flagged.append(f"{sentence_markers}. <b>{highlighted_para}</b><br>")
+                    sentence_markers += 1
 
-                            if error_found:
-                                self.issues_found += 1
-                                # Highlight sentence in red
-                                red_text = (
-                                    f"<span style='color:red'>{sentence.strip()}</span>."
-                                )
-                                self.flagged.append(
-                                    f"{sentence_markers}. {red_text}<br>   → Reason: Sentence is choppy (too short)"
-                                )
-                                sentence_markers += 1
-
-        if self.flagged and self.issues_found > 2:
+        if self.flagged and self.issues_found > 0:
             return {
                 "issues_found_counter": self.issues_found,
                 "issues_para": (
-                    "<b>^Auto-Peer: Choppy Sentences^</b><br><br>"
+                    "<b>Auto-Peer: Choppy Sentences</b><br><br>"
                     + "<br><br>".join(self.flagged)
                     + "<br><br>Click ‘Explanations’ on the Auto-Peer menu if you need further information."
                 ),

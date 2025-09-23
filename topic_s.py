@@ -10,7 +10,8 @@ class TopicSentenceChecker:
         flagged_text = []
 
         for idx, paragraph in enumerate(paragraphs, start=1):
-            sentences = re.split(r'\.\s', paragraph.strip())
+            paragraph_clean = paragraph.strip()
+            sentences = re.split(r'\.\s', paragraph_clean)
 
             # Analyze only if there are more than 3 sentences
             if len(sentences) > 3:
@@ -33,15 +34,17 @@ class TopicSentenceChecker:
                     # Rule: first sentence longer than second by 50%
                     if word_counts[0] > word_counts[1] * 1.5:
                         self.issues_found += 1
+                        # Highlight first three sentences in red
+                        highlighted_sentences = []
+                        for i, sent in enumerate(first_three_sentences):
+                            highlighted_sentences.append(
+                                f"<span style='color:red'><b>Sentence {i+1}:</b> {sent} (Word Count: {word_counts[i]})</span><br><br>"
+                            )
+
                         flagged_text.append(
                             f"<b>Auto-Peer: Topic Sentence Issues</b><br><br>"
-                            f"<u>Paragraph {idx}</u>:<br>{paragraph.strip()}<br><br>"
-                            f"<b>Sentence 1:</b> {first_three_sentences[0]} "
-                            f"(Word Count: {word_counts[0]})<br><br>"
-                            f"<b>Sentence 2:</b> {first_three_sentences[1]} "
-                            f"(Word Count: {word_counts[1]})<br><br>"
-                            f"<b>Sentence 3:</b> {first_three_sentences[2]} "
-                            f"(Word Count: {word_counts[2]})<br><br>"
+                            f"<b>Paragraph {idx}:</b> <b>{paragraph_clean}</b><br><br>"
+                            + "".join(highlighted_sentences) +
                             f"→ <i>Shorter-Longer Violation Found: The topic sentence is disproportionately long compared to the following sentences.</i><br><br>"
                         )
 

@@ -10,26 +10,22 @@ class ParagraphLengthChecker:
 
     def analyze_text(self, text):
         """Analyze the text for paragraph length and structure."""
-        paragraphs = text.split('\n')
+        paragraphs = [p.strip() for p in text.split('\n') if p.strip()]
         flagged_text = []
         issues_found = 0
 
-        flagged_text.append("<b>^Auto-Peer: Paragraph Length Issues^</b><br><br>")
+        flagged_text.append("<b>Auto-Peer: Paragraph Length Issues</b><br><br>")
 
-        for paragraph in paragraphs:
-            paragraph = paragraph.strip()
-            if not paragraph:
-                continue
-
+        for idx, paragraph in enumerate(paragraphs, 1):
             sentences = re.split(r'\.\s', paragraph)
             sentence_count = len([s for s in sentences if s.strip()])  # count only non-empty sentences
 
             # Case 1: Paragraph with more than 11 but <= 15 sentences
-            if sentence_count > self.max_sentences_for_valid_paragraph and sentence_count <= self.max_sentences_in_paragraph:
+            if self.max_sentences_for_valid_paragraph < sentence_count <= self.max_sentences_in_paragraph:
                 issues_found += 1
                 flagged_text.append(
-                    f"<b>Paragraph with <span style='color:red'>{sentence_count}</span> sentences flagged:</b><br>"
-                    f"{paragraph}<br><br>"
+                    f"<b>{idx}.</b> Paragraph has <span style='color:red'>{sentence_count}</span> sentences (slightly long):<br>"
+                    f"<b>{paragraph}</b><br><br>"
                 )
 
             # Case 2: Very long paragraph (> 15 sentences)
@@ -37,8 +33,8 @@ class ParagraphLengthChecker:
                 issues_found += 1
                 self.long_paragraph_counter += 1
                 flagged_text.append(
-                    f"<b>Long paragraph with <span style='color:red'>{sentence_count}</span> sentences flagged:</b><br>"
-                    f"{paragraph}<br><br>"
+                    f"<b>{idx}.</b> Paragraph has <span style='color:red'>{sentence_count}</span> sentences (too long):<br>"
+                    f"<b>{paragraph}</b><br><br>"
                 )
 
             # Track valid paragraphs
@@ -57,10 +53,3 @@ class ParagraphLengthChecker:
                 "issues_found_counter": 0,
                 "issues_para": "No issues identified."
             }
-
-
-# Example Usage
-# text = """..."""
-# checker = ParagraphLengthChecker()
-# result = checker.analyze_text(text)
-# print(result["issues_para"])

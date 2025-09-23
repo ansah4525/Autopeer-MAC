@@ -19,43 +19,35 @@ class inclu_sent:
         }
 
     def analyze_text(self, text):
-        """Analyze the text for inclusive terms."""
+        """Analyze the text for inclusive terms and highlight paragraphs with issues."""
         paragraphs = text.split('\n')
         flagged_text = []
         issues_found = 0
+        paragraph_number = 1
 
         # Add Auto-Peer heading
-        flagged_text.append("<b>^Auto-Peer: Inclusive Terms^</b><br><br>")
+        flagged_text.append("<b>Auto-Peer: Inclusive Terms Detected</b><br><br>")
+        flagged_text.append("The following paragraphs have inclusive term issues:<br><br>")
 
         for paragraph in paragraphs:
             paragraph = paragraph.strip()
             if not paragraph:
                 continue  # Skip empty paragraphs
 
-            sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', paragraph)
-            has_issues = False
-            paragraph_issues = []
+            has_issue = False
+            highlighted_para = paragraph
 
-            for sentence in sentences:
-                for term, recommendation in self.inclusive_terms_dict.items():
-                    if term in sentence:
-                        if not has_issues:
-                            has_issues = True
-                            flagged_text.append("<b>The Paragraph:</b><br>")
-                            flagged_text.append(paragraph + "<br><br>")
-                        
-                        issues_found += 1
-                        highlighted_sentence = sentence.replace(
-                            term, f"<span style='color:red'>{term}</span>"
-                        )
-                        paragraph_issues.append(f"{issues_found}. {highlighted_sentence}<br>")
-                        paragraph_issues.append(
-                            f"&nbsp;&nbsp;&nbsp;→ The word found: <span style='color:red'>{term}</span><br>"
-                            f"&nbsp;&nbsp;&nbsp;→ Suggested replacement: {recommendation}<br><br>"
-                        )
+            for term in self.inclusive_terms_dict.keys():
+                if term in paragraph:
+                    # Highlight the term in red
+                    highlighted_para = highlighted_para.replace(term, f"<span style='color:red'>{term}</span>")
+                    has_issue = True
 
-            if has_issues:
-                flagged_text.extend(paragraph_issues)
+            if has_issue:
+                # Bold the entire paragraph and add it to the flagged list
+                flagged_text.append(f"{paragraph_number}. <b>{highlighted_para}</b><br><br>")
+                paragraph_number += 1
+                issues_found += 1
 
         # Add closing line
         flagged_text.append("Click ‘Explanations’ on the Auto-Peer menu if you need further information.<br><br>")

@@ -1,7 +1,6 @@
 import re
 from typing import Dict
 
-
 class TextAnalyzer:
     def __init__(self):
         self.starters = {
@@ -16,46 +15,45 @@ class TextAnalyzer:
             "Although": "'Although' can be misleading as an opener. Consider revising or restructuring the sentence."
         }
 
-    def analyze_text(self, workingtext: str, explanation_boolean: bool = False) -> Dict[str, str]:
+    def analyze_text(self, workingtext: str) -> Dict[str, str]:
         issuesfoundcounter = 0
-        result_text = "<b>^Auto-Peer: Sentence Starter Issues^</b><br><br>"
+        result_text = "<b>Auto-Peer: Sentence Starter Issues</b><br><br>"
+        flagged_paragraphs = []
 
-        allparagraphs = workingtext.split("\n")
+        paragraphs = workingtext.split("\n")
 
-        for paragraph in allparagraphs:
+        for paragraph in paragraphs:
             paragraph_flagged = False
-            flagged_sentences = []
-            allsentences = re.split(r'(?<=[.!?])\s+', paragraph.strip())
+            highlighted_paragraph = paragraph
 
+            allsentences = re.split(r'(?<=[.!?])\s+', paragraph.strip())
             for sentence in allsentences:
                 sentence = sentence.strip()
                 for starter in self.starters:
-                    pattern = rf"^[“\"]?{starter}\b[,]?"
+                    # Only flag if starter is at the beginning followed by a comma
+                    pattern = rf"^[“\"]?{starter}\b,"
                     if re.match(pattern, sentence, flags=re.IGNORECASE):
                         paragraph_flagged = True
                         issuesfoundcounter += 1
-                        explanation = self.starters[starter]
-                        # Highlight the starter word in red
-                        highlighted_sentence = re.sub(
-                            rf"^{starter}",
+                        # Highlight starter word in red
+                        highlighted_paragraph = re.sub(
+                            rf"(?i)^{starter}",
                             f"<span style='color:red'>{starter}</span>",
-                            sentence,
-                            flags=re.IGNORECASE
+                            paragraph
                         )
-                        flagged_sentences.append(f"{issuesfoundcounter}. {highlighted_sentence}<br>→ {explanation}<br><br>")
                         break
+                if paragraph_flagged:
+                    break
 
             if paragraph_flagged:
-                result_text += "The following paragraph has a <b>'Sentence Starter'</b> issue:<br><br>"
-                result_text += f"{paragraph}<br><br>"
-                result_text += "<b>'Sentence Starter'</b> issues from the paragraph above:<br><br>"
-                result_text += "".join(flagged_sentences)
-                result_text += "<br>"
+                # Bold the paragraph and add to list
+                flagged_paragraphs.append(f"<b>{highlighted_paragraph}</b><br><br>")
 
-        if issuesfoundcounter > 0:
-            result_text += (
-                "Click ‘Explanations’ on the Auto-Peer menu if you need further information.<br>"
-            )
+        if flagged_paragraphs:
+            # Add intro line once before listing paragraphs
+            result_text += "The following paragraphs have a <b>'Sentence Starter'</b> issue:<br><br>"
+            result_text += "".join(flagged_paragraphs)
+            result_text += "Click ‘Explanations’ on the Auto-Peer menu if you need further information.<br>"
         else:
             result_text = "No issues identified."
 

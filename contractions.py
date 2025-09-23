@@ -33,8 +33,12 @@ class ContractionsCheckerXojoExact:
                 found = False
                 for abbrv in self.abbrv_list:
                     if f"{abbrv} " in sentence or f"{abbrv}," in sentence or sentence.endswith(abbrv):
-                        # Replace contraction with red-highlighted version
-                        sentence = sentence.replace(abbrv, f"<span style='color:red'>{abbrv}</span>")
+                        # Highlight contraction in red
+                        sentence = sentence.replace(
+                            abbrv, f"<span style='color:red'>{abbrv}</span>"
+                        )
+                        # Bold the entire sentence
+                        sentence = f"<b>{sentence}</b>"
                         found = True
                         break
 
@@ -48,15 +52,13 @@ class ContractionsCheckerXojoExact:
 
         if gather_all:
             explanation = (
-                "This check flags informal contractions such as <span style='color:red'>he’s</span> "
-                "or <span style='color:red'>shouldn’t</span> in longer paragraphs.<br><br>"
                 "Academic style typically avoids contractions; revise to full forms for formal tone.<br><br>"
                 "Click ‘Explanations’ on the Auto-Peer menu if you need further information.<br><br>"
             )
             return {
                 "issues_found_counter": self.num_sentence,
                 "issues_para": (
-                    "<b>^Auto-Peer: Contractions^</b><br><br>" +
+                    "<b>Auto-Peer: Contractions</b><br><br>" +
                     gather_all + explanation
                 )
             }

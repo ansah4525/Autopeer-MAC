@@ -72,6 +72,8 @@ class CounterArgumentCheckerXojoExact:
                                     second, f"<span style='color:red'>{second}</span>"
                                 )
                             )
+                            # Bold entire sentence
+                            highlighted = f"<b>{highlighted}</b>"
                             gather_all += f"{self.sentence_number}. {highlighted}.<br><br>"
                             self.issues_found_counter += 1
                             self.sentence_number += 1
@@ -82,6 +84,8 @@ class CounterArgumentCheckerXojoExact:
                         highlighted = first_sentence.replace(
                             phrase, f"<span style='color:red'>{phrase}</span>"
                         )
+                        # Bold entire sentence
+                        highlighted = f"<b>{highlighted}</b>"
                         gather_all += f"{self.sentence_number}. {highlighted}.<br><br>"
                         self.issues_found_counter += 1
                         self.sentence_number += 1
@@ -96,8 +100,7 @@ class CounterArgumentCheckerXojoExact:
             return {
                 "issues_found_counter": self.issues_found_counter,
                 "issues_para": (
-                    "<b>^Auto-Peer: Counter Argument^</b><br><br>"
-                    "Possible counter arguments found:<br><br>"
+                    "<b>Auto-Peer: Counter Argument</b><br><br>"
                     + gather_all
                     + explanation
                 )

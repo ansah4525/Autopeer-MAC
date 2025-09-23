@@ -52,7 +52,7 @@ class ParagraphEndingChecker:
                     self.issue_counter += 1
                     highlighted = sentence.replace(wc, f"<span style='color:red'>{wc}</span>")
                     self.messages.append(
-                        f"{i+1}. {highlighted}<br>"
+                        f"<b>{i+1}.</b> {highlighted}<br>"
                         f"&nbsp;&nbsp;&nbsp;→ This sentence starts with '{wc},' which may sound dated or sarcastic.<br><br>"
                     )
                     flagged_sentences.add(sentence)
@@ -64,7 +64,7 @@ class ParagraphEndingChecker:
                     self.issue_counter += 1
                     highlighted = sentence.replace(phrase, f"<span style='color:red'>{phrase}</span>")
                     self.messages.append(
-                        f"{i+1}. {highlighted}<br>"
+                        f"<b>{i+1}.</b> {highlighted}<br>"
                         f"&nbsp;&nbsp;&nbsp;→ Final sentence ends with an example. Consider adding elaboration.<br><br>"
                     )
                     flagged_sentences.add(sentence)
@@ -74,7 +74,7 @@ class ParagraphEndingChecker:
             if self.reference_pattern.search(sentence) or self.quote_pattern.search(sentence):
                 self.issue_counter += 1
                 self.messages.append(
-                    f"{i+1}. {sentence}<br>"
+                    f"<b>{i+1}.</b> {sentence}<br>"
                     f"&nbsp;&nbsp;&nbsp;→ Final sentence contains a citation or quote. Consider adding explanation.<br><br>"
                 )
                 flagged_sentences.add(sentence)
@@ -86,7 +86,7 @@ class ParagraphEndingChecker:
                         self.issue_counter += 1
                         highlighted = sentence.replace(word, f"<span style='color:red'>{word}</span>")
                         self.messages.append(
-                            f"{i+1}. {highlighted}<br>"
+                            f"<b>{i+1}.</b> {highlighted}<br>"
                             f"&nbsp;&nbsp;&nbsp;→ Two consecutive paragraphs end with '{word}', which may feel repetitive.<br><br>"
                         )
                     last_conclusion_word = word
@@ -105,7 +105,7 @@ class ParagraphEndingChecker:
             return {
                 "issues_found_counter": self.issue_counter,
                 "issues_para": (
-                    "<b>^Auto-Peer: Paragraph Ending Issues^</b><br><br>"
+                    "<b>Auto-Peer: Paragraph Ending Issues</b><br><br>"
                     + "".join(self.messages)
                     + "Click ‘Explanations’ on the Auto-Peer menu if you need further information.<br><br>"
                 ),

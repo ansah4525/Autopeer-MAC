@@ -44,8 +44,9 @@ class SymbolIssueChecker:
             if "color:red" in marked_para:
                 symbols_exist = True
                 issue_found_counter += 1
+                # Bold the paragraph
                 gather_all.append(
-                    f"<u>Paragraph {idx}</u>:<br>{marked_para}<br><br>"
+                    f"<b>Paragraph {idx}:</b><br><b>{marked_para}</b><br><br>"
                 )
 
         if symbols_exist:

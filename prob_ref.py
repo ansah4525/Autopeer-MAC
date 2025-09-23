@@ -55,13 +55,15 @@ class ReferencePositioningChecker:
                 s = s.strip()
                 if re.search(r'\([^)]+\)\.$', s) and "|" not in s:
                     self.sent_counter += 1
-                    # Highlight the reference in red
-                    highlighted = re.sub(
+                    # Highlight the reference in red inside the whole paragraph (bolded)
+                    highlighted_para = re.sub(
                         r'(\([^)]+\))',
                         r"<span style='color:red'>\1</span>",
-                        s
+                        para
                     )
-                    flagged_paragraphs.append(f"{self.sent_counter}. {highlighted}<br>")
+                    flagged_paragraphs.append(
+                        f"{self.sent_counter}. <b>{highlighted_para}</b><br><br>"
+                    )
                     break
 
         if self.sent_counter > 0:
@@ -72,13 +74,13 @@ class ReferencePositioningChecker:
                 "Sources should ideally be introduced early and used more precisely.<br><br>"
                 "Click ‘Explanations’ on the Auto-Peer menu if you need further information.<br><br>"
             )
-            issues_text = "<br><br>".join(flagged_paragraphs)
+            issues_text = "".join(flagged_paragraphs)
             return {
                 "issues_found_counter": self.sent_counter,
                 "issues_para": (
-                    "<b>^Auto-Peer: Problematic Reference Positioning^</b><br><br>"
+                    "<b>Auto-Peer: Problematic Reference Positioning</b><br><br>"
                     + issues_text
-                    + "<br><br>" + explanation
+                    + explanation
                 )
             }
         else:

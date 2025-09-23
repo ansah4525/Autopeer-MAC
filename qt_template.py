@@ -2560,10 +2560,10 @@ Note that some short sentences work perfectly well. You have to decide whether a
            # print("yes its true")
             issues.append(analysis_result16["issues_para"])
             print(issues)
-        if analysis_result17.get("issues_para") and analysis_result17.get("issues_found_counter")>0:
-           # print("yes its true")
-            issues.append(analysis_result17["issues_para"])
-            print(issues)
+        # if analysis_result17.get("issues_para") and analysis_result17.get("issues_found_counter")>0:
+        #    # print("yes its true")
+        #     issues.append(analysis_result17["issues_para"])
+        #     print(issues)
         if analysis_result18.get("issues_para") and analysis_result18.get("issues_found_counter")>0:
            # print("yes its true")
             issues.append(analysis_result18["issues_para"])

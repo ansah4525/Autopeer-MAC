@@ -51,20 +51,19 @@ class MissingReferenceChecker:
             if not self.contains_reference(p1) and not self.contains_reference(p2):
                 count += 1
                 flagged_pairs.append(
-                    f"<b>Example {count}:</b><br><br>"
-                    f"<span style='color:red'>Paragraph 1:</span><br>{p1.strip()}<br><br>"
-                    f"<span style='color:red'>Paragraph 2:</span><br>{p2.strip()}<br><br>"
+                    f"{count}. <span style='color:red'>Paragraph 1:</span><br><b>{p1.strip()}</b><br><br>"
+                    f"<span style='color:red'>Paragraph 2:</span><br><b>{p2.strip()}</b><br><br>"
                 )
 
         if flagged_pairs:
             explanation = (
-                "The following pairs of consecutive paragraphs appear to lack references. "
-                "This may indicate weak or missing sourcing.<br><br>"
+                "The following consecutive paragraphs may lack references. "
+                "This could indicate weak or missing sourcing.<br><br>"
                 "Click ‘Explanations’ on the Auto-Peer menu if you need further information.<br><br>"
             )
             return {
                 "issues_found_counter": count,
-                "issues_para": "<b>^Auto-Peer: Missing References^</b><br><br>" + "".join(flagged_pairs) + explanation
+                "issues_para": "<b>Auto-Peer: Missing References</b><br><br>" + "".join(flagged_pairs) + explanation
             }
         else:
             return {

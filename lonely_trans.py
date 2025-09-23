@@ -13,7 +13,8 @@ class LonelyTransitionalsChecker:
 
         paragraphs = text.split('\n\n')
         gather_all = []
-        gather_all.append("<b>^Auto-Peer: Lonely Transitionals Issue^</b><br><br>")
+        gather_all.append("<b>Auto-Peer: Lonely Transitionals Issue</b><br><br>")
+        gather_all.append("The following paragraphs might be causing a <b>'Lonely Transitionals'</b> issue:<br><br>")
 
         # List of lonely transitionals to flag
         lonely_transitionals = [
@@ -24,36 +25,6 @@ class LonelyTransitionalsChecker:
             "Likewise", "Namely", "Otherwise", "Similarly", "Thereby", "Therefore", "Thus",
             "Moreover"
         ]
-
-        # Explanations for the transitionals
-        explanations = {
-            "Accordingly": "Following the procedure described above ...",
-            "Additionally": "In addition to the problem of waste management ...",
-            "Also": "Deforestation is also a problem in Africa ...",
-            "As a result": "As a result of deforestation ...",
-            "Besides": "In addition to the problem of waste management ...",
-            "By contrast": "In contrast to the problem of waste management ...",
-            "Consequently": "As a consequence of the problem of deforestation ...",
-            "Conversely": "In contrast to the problem of waste management ...",
-            "Especially": "A good example of effective solar energy production can be found in ...",
-            "For example": "An example of effective solar energy production can be found in ...",
-            "For instance": "An example of effective solar energy production can be found in ...",
-            "Furthermore": "In addition to the problem of waste management ...",
-            "Hence": "As a result of this deforestation, ...",
-            "However": "In contrast to the problem of waste management ...",
-            "In addition": "In addition to the problem of waste management ...",
-            "In contrast": "In contrast to the problem of waste management ...",
-            "Indeed": "To be added...",
-            "In particular": "A good example of effective solar energy production can be found in ...",
-            "Particularly": "A good example of effective solar energy production can be found in ...",
-            "Likewise": "Similar to the problem of deforestation, ...",
-            "Namely": "A specific example of the issue of deforestation is ...",
-            "Otherwise": "If this problem with deforestation is not resolved, ...",
-            "Similarly": "Similar to the problem of deforestation, ...",
-            "Thereby": "Through this use of genetic engineering ...",
-            "Therefore": "As a result of this deforestation, ...",
-            "Thus": "As a result of this deforestation, ..."
-        }
 
         # Process each paragraph
         for paragraph in paragraphs:
@@ -66,17 +37,13 @@ class LonelyTransitionalsChecker:
             if match:
                 transitional = match.group(1)
                 self.lonely_counter += 1
-                explanation = explanations.get(transitional, "No specific explanation provided.")
 
                 # Highlight the transitional
                 highlighted = paragraph.replace(
                     transitional, f"<span style='color:red'>{transitional}</span>", 1
                 )
 
-                gather_all.append(
-                    f"{self.lonely_counter}. {highlighted}<br>"
-                    f"&nbsp;&nbsp;&nbsp;→ <b>Explanation:</b> {explanation}<br><br>"
-                )
+                gather_all.append(f"<b>{self.lonely_counter}. {highlighted}</b><br><br>")
 
         # Reconstruct the output
         gather_all.append("Click ‘Explanations’ on the Auto-Peer menu if you need further information.<br><br>")

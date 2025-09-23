@@ -34,7 +34,6 @@ class OverlyComplexSentenceChecker:
                 that_count = len(re.findall(r"\bthat\b", sentence))
                 because_count = len(re.findall(r"\bbecause\b", sentence))
 
-                # Count "which" excluding preposition+which forms
                 which_count = len(re.findall(r"\bwhich\b", sentence))
                 for prep in self.prep_which:
                     which_count -= len(re.findall(rf"\b{prep}\b", sentence))
@@ -51,7 +50,7 @@ class OverlyComplexSentenceChecker:
                         flagged_sentence,
                     )
                     flagged_all.append(
-                        f"{self.num_sentence}. {flagged_sentence}.<br>   → The word <b>which</b> is repeated in this sentence."
+                        f"{self.num_sentence}. <b>{flagged_sentence}.</b><br>   → The word <b>which</b> is repeated in this sentence."
                     )
                     self.num_sentence += 1
 
@@ -64,7 +63,7 @@ class OverlyComplexSentenceChecker:
                         flagged_sentence,
                     )
                     flagged_all.append(
-                        f"{self.num_sentence}. {flagged_sentence}.<br>   → The word <b>that</b> is repeated in this sentence."
+                        f"{self.num_sentence}. <b>{flagged_sentence}.</b><br>   → The word <b>that</b> is repeated in this sentence."
                     )
                     self.num_sentence += 1
 
@@ -77,7 +76,7 @@ class OverlyComplexSentenceChecker:
                         flagged_sentence,
                     )
                     flagged_all.append(
-                        f"{self.num_sentence}. {flagged_sentence}.<br>   → The word <b>and</b> is repeated in this sentence."
+                        f"{self.num_sentence}. <b>{flagged_sentence}.</b><br>   → The word <b>and</b> is repeated in this sentence."
                     )
                     self.num_sentence += 1
 
@@ -90,7 +89,7 @@ class OverlyComplexSentenceChecker:
                         flagged_sentence,
                     )
                     flagged_all.append(
-                        f"{self.num_sentence}. {flagged_sentence}.<br>   → The word <b>but</b> is repeated in this sentence."
+                        f"{self.num_sentence}. <b>{flagged_sentence}.</b><br>   → The word <b>but</b> is repeated in this sentence."
                     )
                     self.num_sentence += 1
 
@@ -102,7 +101,7 @@ class OverlyComplexSentenceChecker:
                         flagged_sentence,
                     )
                     flagged_all.append(
-                        f"{self.num_sentence}. {flagged_sentence}.<br>   → The word <b>because</b> is repeated in this sentence."
+                        f"{self.num_sentence}. <b>{flagged_sentence}.</b><br>   → The word <b>because</b> is repeated in this sentence."
                     )
                     self.num_sentence += 1
 
@@ -117,7 +116,7 @@ class OverlyComplexSentenceChecker:
                 if types_present > 3:
                     flagged = True
                     flagged_all.append(
-                        f"{self.num_sentence}. {sentence}.<br>   → This sentence contains many linking/complex words, which may lead to a wandering structure that is hard to process."
+                        f"{self.num_sentence}. <b>{sentence}.</b><br>   → This sentence contains many linking/complex words, which may lead to a wandering structure that is hard to process."
                     )
                     self.num_sentence += 1
 
@@ -128,7 +127,7 @@ class OverlyComplexSentenceChecker:
             return {
                 "issues_found_counter": self.issues_found,
                 "issues_para": (
-                    "<b>^Auto-Peer: Overly-Complex Sentences^</b><br><br>"
+                    "<b>Auto-Peer: Overly-Complex Sentences</b><br><br>"
                     + "<br><br>".join(flagged_all)
                     + "<br><br>Click ‘Explanations’ on the Auto-Peer menu if you need further information."
                 ),

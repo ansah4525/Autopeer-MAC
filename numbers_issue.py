@@ -13,8 +13,8 @@ class NumbersIssueChecker:
         paragraphs = text.split('\n')
         self.issue_counter = 0
 
-        flagged_sentences.append("<b>^Auto-Peer – Numbers/Figures Issue^</b><br><br>")
-        flagged_sentences.append("The following sentences may contain a number/figure issue.<br><br>")
+        flagged_sentences.append("<b>Auto-Peer – Numbers/Figures Issue</b><br><br>")
+        flagged_sentences.append("The following sentences may contain number/figure issues:<br><br>")
 
         # Regex: match small numbers 1–9 followed by a space and a word (like "3 apples")
         # Excludes decimals, versions, and units.
@@ -47,8 +47,7 @@ class NumbersIssueChecker:
                             highlighted[m.end():]
                         )
                     flagged_sentences.append(
-                        f"{self.issue_counter}. {highlighted}<br>"
-                        f"&nbsp;&nbsp;&nbsp;→ Consider writing out small numbers as words (e.g., 'three apples').<br><br>"
+                        f"{self.issue_counter}. <b>{highlighted}</b><br><br>"
                     )
 
         if self.issue_counter == 0:

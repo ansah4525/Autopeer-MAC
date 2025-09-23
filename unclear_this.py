@@ -23,13 +23,8 @@ class UnclearThisIssueChecker:
         return False
 
     def _flag_conditions(self, sentence: str):
-        """
-        Return (True/False, reason) instead of just True/False.
-        """
         s = sentence.strip()
         lower = s.lower()
-
-        # spaCy noun-exception check
         doc = self.nlp(sentence)
         for i, token in enumerate(doc):
             if token.lower_ in {"this", "these"}:
@@ -89,16 +84,16 @@ class UnclearThisIssueChecker:
                             s,
                             flags=re.IGNORECASE
                         )
-                        # Add reason below
+                        # Bold the paragraph containing the flagged sentence
                         self.flagged.append(
-                            f"{self.this_counter}. {red_text}<br>   → Reason: {reason}"
+                            f"{self.this_counter}. <b>{para}</b><br>   → {red_text}<br>   → Reason: {reason}"
                         )
 
         if self.flagged:
             return {
                 "issues_found_counter": self.this_counter,
                 "issues_para": (
-                    "<b>^Auto-Peer: Unclear #this/these# References^</b><br><br>"
+                    "<b>Auto-Peer: Unclear #this/these# References</b><br><br>"
                     + "<br><br>".join(self.flagged)
                     + "<br><br>Click ‘Explanations’ on the Auto-Peer menu if you need further information."
                 ),
