@@ -1,0 +1,4 @@
+PyQt5
+pyttsx3
+spacy
+openai
