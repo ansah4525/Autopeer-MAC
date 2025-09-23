@@ -2600,7 +2600,7 @@ Note that some short sentences work perfectly well. You have to decide whether a
                 issues_list.append(issue)
         #window = IssueNavigatorWindow(issues=issues_list)
         
-        self.issue_navigator_window = IssueNavigatorWindow(issues=issues_list)
+        self.issue_navigator_window = IssueNavigatorWindow(issues=issues_list, parent=self)
         self.issue_navigator_window.show()
 
 
@@ -2659,66 +2659,95 @@ class ResultWindow(qtw.QWidget):
 
 
 class IssueNavigatorWindow(qtw.QMainWindow):
-    def __init__(self, issues=None):
-        super().__init__()
+    def __init__(self, issues=None, parent=None):
+        super().__init__(parent)
+        self.parent = parent  # store mainWindow reference
         self.setWindowTitle("Issue Navigator")
-        self.setGeometry(100, 100, 800, 600)  # Adjust window size
+        self.setGeometry(100, 100, 800, 600)
 
         self.central_widget = qtw.QWidget(self)
         self.setCentralWidget(self.central_widget)
         
         self.layout = qtw.QVBoxLayout(self.central_widget)
 
-        # Add a centered label for Issue Navigator
+        # Title
         self.title_label = qtw.QLabel("<h4>Issue Navigator</h4>", self)
         self.title_label.setFont(qtg.QFont('Times New Roman', 12))
-        self.title_label.setAlignment(qtc.Qt.AlignCenter)  # Center the text
+        self.title_label.setAlignment(qtc.Qt.AlignCenter)
         self.layout.addWidget(self.title_label)
 
-        # Add a QTextEdit box to display the issue
+        # Issue display
         self.issue_box = qtw.QTextEdit(self)
-        self.issue_box.setFont(qtg.QFont('Times New Roman', 12))  # Increase font size
+        self.issue_box.setFont(qtg.QFont('Times New Roman', 12))
         self.issue_box.setStyleSheet("""
             background-color: lightyellow; 
             border: 2px solid darkblue; 
             border-radius: 10px;
             padding: 10px;
-        """)  # Set light yellow background color, dark blue border, and padding
-        self.issue_box.setAlignment(qtc.Qt.AlignLeft)  # Left-align the text
-        self.issue_box.setReadOnly(True)  # Make the box read-only
+        """)
+        self.issue_box.setAlignment(qtc.Qt.AlignLeft)
+        self.issue_box.setReadOnly(True)
         self.layout.addWidget(self.issue_box)
 
-        # Navigation buttons
+        # Navigation
         self.button_layout = qtw.QHBoxLayout()
 
         self.prev_button = qtw.QPushButton("Previous", self)
         self.prev_button.setFont(qtg.QFont('Times New Roman', 12))
-        self.prev_button.setStyleSheet("""
-            background-color: lightblue; 
-            border: 1px solid darkblue; 
-            border-radius: 5px;
-            padding: 5px;
-        """)  # Set light blue background color, dark blue border, and padding
         self.prev_button.clicked.connect(self.show_previous_issue)
         self.button_layout.addWidget(self.prev_button)
 
+        self.page_label = qtw.QLabel("0/0", self)
+        self.page_label.setFont(qtg.QFont('Times New Roman', 12))
+        self.page_label.setAlignment(qtc.Qt.AlignCenter)
+        self.button_layout.addWidget(self.page_label)
+
         self.next_button = qtw.QPushButton("Next", self)
         self.next_button.setFont(qtg.QFont('Times New Roman', 12))
-        self.next_button.setStyleSheet("""
-            background-color: lightblue; 
-            border: 1px solid darkblue; 
-            border-radius: 5px;
-            padding: 5px;
-        """)  # Set light blue background color, dark blue border, and padding
         self.next_button.clicked.connect(self.show_next_issue)
         self.button_layout.addWidget(self.next_button)
 
         self.layout.addLayout(self.button_layout)
 
+        # === Explanations Menu (calls parent's methods) ===
+        menubar = self.menuBar()
+        explanation_menu = menubar.addMenu('Explanations')
+
+        # Create and connect all actions to parent's explain_* methods
+        actions = {
+           # "Paragraph length": self.parent.explain_paragraph_length,
+            "Sentence length": self.parent.explain_sentence_length,
+            "Inclusive Terms": self.parent.explain_inclusive_sentences,
+            "MAY vs MIGHT have issue": self.parent.explain_may_issue,
+            "Double Transitionals": self.parent.explain_double_cohesion,
+            "Fake transitionals": self.parent.explain_fake_transitionals,
+            "Sentence Starter": self.parent.explain_sen_start,
+            "Lonely Transitionals": self.parent.explain_lonely,
+            "Topic Sentence": self.parent.explain_topic_sentence,
+            "Choppy Sentences": self.parent.explain_choppy_sentence,
+            "Fake Friends": self.parent.explain_fake_freinds,
+            "Numbers Issue": self.parent.explain_num_issue,
+            "Problematic Referencing": self.parent.explain_problematic_ref,
+            "Missing Referencing": self.parent.explain_missing_ref,
+            "Symbols Issue": self.parent.explain_symbol,
+            "That vs COMMA which issue": self.parent.explain_thatwhich,
+            "Synthesis Issue": self.parent.explain_synthesis,
+            "Contractions": self.parent.explain_contraction,
+            "Counter Arguments": self.parent.explain_counter,
+            "Pronoun Cohesion": self.parent.explain_pronoun,
+            "Unclear This Issue": self.parent.explain_unthis,
+            "Paragraph Endings": self.parent.explain_paraend,
+            "Overly Complex Sentences": self.parent.explain_over_ex,
+        }
+
+        for label, slot in actions.items():
+            act = QAction(label, self)
+            act.triggered.connect(slot)
+            explanation_menu.addAction(act)
+
+        # Issue list
         self.current_issue_index = 0
         self.issues_list = issues if issues else []
-
-        # Initialize the display with the provided issues
         self.update_display()
 
     def update_issues(self, issues):
@@ -2727,12 +2756,13 @@ class IssueNavigatorWindow(qtw.QMainWindow):
         self.update_display()
 
     def update_display(self):
-        if self.current_issue_index >= 0 and self.current_issue_index < len(self.issues_list):
+        if 0 <= self.current_issue_index < len(self.issues_list):
             self.issue_box.setHtml(self.issues_list[self.current_issue_index])
+            self.page_label.setText(f"{self.current_issue_index+1}/{len(self.issues_list)}")
         else:
             self.issue_box.clear()
+            self.page_label.setText("0/0")
 
-        # Update button states
         self.prev_button.setEnabled(self.current_issue_index > 0)
         self.next_button.setEnabled(self.current_issue_index < len(self.issues_list) - 1)
 
@@ -2745,6 +2775,7 @@ class IssueNavigatorWindow(qtw.QMainWindow):
         if self.current_issue_index < len(self.issues_list) - 1:
             self.current_issue_index += 1
             self.update_display()
+
 
 
 # Assume `numbered_issues` has been generated from your analysis as shown earlier
