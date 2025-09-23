@@ -9,12 +9,27 @@ jobs:
   build-macos-intel:
     runs-on: macos-12  # Intel runner
     steps:
-      # same steps...
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -r requirements.txt
+          python -m spacy download en_core_web_sm
+
       - name: Build .app with PyInstaller (Intel)
         run: |
           pyinstaller --onefile --windowed \
           --add-data "logologotype.jpg:." \
           qt_template.py
+
       - name: Upload Intel .app
         uses: actions/upload-artifact@v4
         with:
@@ -24,12 +39,27 @@ jobs:
   build-macos-arm:
     runs-on: macos-latest  # Apple Silicon runner
     steps:
-      # same steps...
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -r requirements.txt
+          python -m spacy download en_core_web_sm
+
       - name: Build .app with PyInstaller (ARM)
         run: |
           pyinstaller --onefile --windowed \
           --add-data "logologotype.jpg:." \
           qt_template.py
+
       - name: Upload ARM .app
         uses: actions/upload-artifact@v4
         with:
