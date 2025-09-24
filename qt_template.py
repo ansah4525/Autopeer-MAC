@@ -412,28 +412,28 @@ class mainWindow(qtw.QMainWindow):
             # Instantiate the TextAnalyzer
         #check add mroe text analyzers
         self.text_analyzer1 = ParagraphLengthChecker()
-        self.text_analyzer2=TextAnalyzer()
-        self.text_analyzer3=SentenceAnalyzer()
-        self.text_analyzer4=FakeFriendsChecker()
-        self.text_analyzer5=inclu_sent()
-        self.text_analyzer6=MayVsMightChecker()
-        self.text_analyzer7=DoubledTransitionalsChecker()
-        self.text_analyzer8=LonelyTransitionalsChecker()
-        self.text_analyzer9=TopicSentenceChecker()
-        self.text_analyzer10=ChoppySentenceChecker()
-        self.text_analyzer11=FakeFriendsChecker_real()
-        self.text_analyzer12=NumbersIssueChecker()
-        self.text_analyzer13=ReferencePositioningChecker()
-        self.text_analyzer14=MissingReferenceChecker()
-        self.text_analyzer15=SymbolIssueChecker()
+        self.text_analyzer2=DoubledTransitionalsChecker()
+        self.text_analyzer3=LonelyTransitionalsChecker()
+        self.text_analyzer4=TopicSentenceChecker()
+        self.text_analyzer5=ChoppySentenceChecker()
+        self.text_analyzer6=OverlyComplexSentenceChecker()
+        self.text_analyzer7=SentenceAnalyzer()
+        self.text_analyzer8=TextAnalyzer()
+        self.text_analyzer9=ContractionsCheckerXojoExact()
+        self.text_analyzer10=FakeFriendsChecker_real()
+        self.text_analyzer11=FakeFriendsChecker()
+        self.text_analyzer12=inclu_sent()
+        self.text_analyzer13=MayVsMightChecker()
+        self.text_analyzer14=NumbersIssueChecker()
+        self.text_analyzer15=WhichVsThatChecker()
         self.text_analyzer16=WhichVsThatChecker()
-        self.text_analyzer17=SynthesisCheckerXojoExact()
-        self.text_analyzer18=ContractionsCheckerXojoExact()
-        self.text_analyzer19=CounterArgumentCheckerXojoExact()
-        self.text_analyzer20=PronounCohesionCheckerXojoExact()
-        self.text_analyzer21=UnclearThisIssueChecker()
+        self.text_analyzer17=UnclearThisIssueChecker()
+        self.text_analyzer18=PronounCohesionCheckerXojoExact()
+        self.text_analyzer19=MissingReferenceChecker()
+        self.text_analyzer20=ReferencePositioningChecker()
+        self.text_analyzer21=SymbolIssueChecker()
         self.text_analyzer22=ParagraphEndingChecker()
-        self.text_analyzer23=OverlyComplexSentenceChecker()
+        self.text_analyzer23=SynthesisCheckerXojoExact()
 
 
         self.resize(800, 600)  # Adjust window size
@@ -2160,81 +2160,84 @@ Note that some short sentences work perfectly well. You have to decide whether a
 
         # Add numbered results if they are not null
         if analysis_result1.get("issues_para") and analysis_result1.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result1['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result1['issues_para']}\n")
             counter += 1
         if analysis_result2.get("issues_para") and analysis_result2.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result2['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result2['issues_para']}\n")
             counter += 1
         if analysis_result3.get("flagged_sentences") and analysis_result3.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result3['flagged_sentences']}\n")
+            numbered_issues.append(f"{counter} {analysis_result3['issues_para']}\n")
             counter += 1
         if analysis_result4.get("flagged_text") and analysis_result4.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result4['flagged_text']}\n")
+            numbered_issues.append(f"{counter} {analysis_result4['issues_para']}\n")
             counter += 1
         if analysis_result5.get("issues_para") and analysis_result5.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result5['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result5['issues_para']}\n")
             counter += 1
         if analysis_result6.get("issues_para") and analysis_result6.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result6['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result6['issues_para']}\n")
             counter += 1
         if analysis_result7.get("issues_para") and analysis_result7.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result7['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result7['issues_para']}\n")
             counter += 1
         if analysis_result8.get("issues_para") and analysis_result8.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result8['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result8['issues_para']}\n")
             counter += 1
         if analysis_result9.get("issues_para") and analysis_result9.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result9['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result9['issues_para']}\n")
             counter += 1
         if analysis_result10.get("issues_para") and analysis_result10.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result10['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result10['issues_para']}\n")
             counter += 1
         if analysis_result11.get("issues_para") and analysis_result11.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result11['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result11['issues_para']}\n")
             counter +=1 
         if analysis_result12.get("issues_para") and analysis_result12.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result12['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result12['issues_para']}\n")
             counter +=1 
         if analysis_result13.get("issues_para") and analysis_result13.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result13['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result13['issues_para']}\n")
             counter +=1 
         if analysis_result14.get("issues_para") and analysis_result14.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result14['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result14['issues_para']}\n")
             counter +=1 
         if analysis_result15.get("issues_para") and analysis_result15.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result15['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result15['issues_para']}\n")
             counter +=1
         if analysis_result16.get("issues_para") and analysis_result16.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result16['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result16['issues_para']}\n")
             counter +=1
         if analysis_result17.get("issues_para") and analysis_result17.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result17['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result17['issues_para']}\n")
             counter +=1
         if analysis_result18.get("issues_para") and analysis_result18.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result18['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result18['issues_para']}\n")
             counter +=1
         if analysis_result19.get("issues_para") and analysis_result19.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result19['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result19['issues_para']}\n")
             counter +=1
         if analysis_result20.get("issues_para") and analysis_result20.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result20['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result20['issues_para']}\n")
             counter +=1
         if analysis_result21.get("issues_para") and analysis_result21.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result21['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result21['issues_para']}\n")
             counter +=1
         if analysis_result22.get("issues_para") and analysis_result22.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result22['issues_para']}\n")
+            numbered_issues.append(f"{counter} {analysis_result22['issues_para']}\n")
             counter +=1
-        if analysis_result23.get("issues_para") and analysis_result23.get("issues_found_counter")>0:
-            numbered_issues.append(f"#{counter} {analysis_result23['issues_para']}\n")
-            counter +=1
+        # if analysis_result23.get("issues_para") and analysis_result23.get("issues_found_counter")>0:
+        #     numbered_issues.append(f"{counter} {analysis_result23['issues_para']}\n")
+        #     counter +=1
        
        
        
 
 
         # Combine the numbered issues into a single string
-        final_issues_para = "The following lines/paras might be causing issues:\n" + "\n".join(numbered_issues)
+        final_issues_para = (
+        "The following lines/paras might be causing issues:<br><br>"
+        + "<br><br>".join(numbered_issues)
+    )
 
         # Summing the issues found
         total_issues_found = (
@@ -2265,7 +2268,7 @@ Note that some short sentences work perfectly well. You have to decide whether a
         elif count==2:
             analysis_result = {
                 # "issues_found_counter": analysis_result3.get("flagged_sentence_count", 0),
-                "issues_para": analysis_result3.get("flagged_sentences")
+                "issues_para": analysis_result3.get("issues_para")
             }
         elif count==3:
             analysis_result = {
@@ -2275,7 +2278,7 @@ Note that some short sentences work perfectly well. You have to decide whether a
         elif count==4:
             analysis_result = {
                 # "issues_found_counter": analysis_result4.get("issues_found_counter", 0),
-                "issues_para": analysis_result4.get("flagged_text")
+                "issues_para": analysis_result4.get("issues_para")
             }
         elif count==5:
             analysis_result = {
@@ -2510,10 +2513,10 @@ Note that some short sentences work perfectly well. You have to decide whether a
             issues.append(analysis_result1["issues_para"])
         if analysis_result2.get("issues_para") and analysis_result2.get("issues_found_counter")>0:
             issues.append(analysis_result2["issues_para"])
-        if analysis_result3.get("flagged_sentences") and analysis_result3.get("issues_found_counter")>0:
-            issues.append(analysis_result3["flagged_sentences"])
-        if analysis_result4.get("flagged_text") and analysis_result4.get("issues_found_counter")>0:
-            issues.append(analysis_result4["flagged_text"])
+        if analysis_result3.get("issues_para") and analysis_result3.get("issues_found_counter")>0:
+            issues.append(analysis_result3["issues_para"])
+        if analysis_result4.get("issues_para") and analysis_result4.get("issues_found_counter")>0:
+            issues.append(analysis_result4["issues_para"])
         if analysis_result5.get("issues_para") and analysis_result5.get("issues_found_counter")>0:
             issues.append(analysis_result5["issues_para"])
         if analysis_result6.get("issues_para") and analysis_result6.get("issues_found_counter")>0:
@@ -2560,10 +2563,10 @@ Note that some short sentences work perfectly well. You have to decide whether a
            # print("yes its true")
             issues.append(analysis_result16["issues_para"])
             print(issues)
-        # if analysis_result17.get("issues_para") and analysis_result17.get("issues_found_counter")>0:
-        #    # print("yes its true")
-        #     issues.append(analysis_result17["issues_para"])
-        #     print(issues)
+        if analysis_result17.get("issues_para") and analysis_result17.get("issues_found_counter")>0:
+           # print("yes its true")
+            issues.append(analysis_result17["issues_para"])
+            print(issues)
         if analysis_result18.get("issues_para") and analysis_result18.get("issues_found_counter")>0:
            # print("yes its true")
             issues.append(analysis_result18["issues_para"])
@@ -2584,10 +2587,10 @@ Note that some short sentences work perfectly well. You have to decide whether a
            # print("yes its true")
             issues.append(analysis_result22["issues_para"])
             print(issues)
-        if analysis_result23.get("issues_para") and analysis_result23.get("issues_found_counter")>0:
-           # print("yes its true")
-            issues.append(analysis_result23["issues_para"])
-            print(issues)
+        # if analysis_result23.get("issues_para") and analysis_result23.get("issues_found_counter")>0:
+        #    # print("yes its true")
+        #     issues.append(analysis_result23["issues_para"])
+        #     print(issues)
 
         if issues:
             print("npthing")

@@ -14,20 +14,33 @@ class PronounCohesionCheckerXojoExact:
         issue_count = 0
 
         for para in paragraphs:
+            # Split sentences on punctuation + space
             sentences = re.split(r'(?<=[.!?])\s+', para.strip())
             for sent in sentences:
                 s = sent.strip()
                 if not s:
                     continue
 
-                # Check for start or end pronoun
-                start_word = s.split()[0].lower() if s.split() else ""
-                end_word = s.split()[-1].lower() if s.split() else ""
-                comma_pronoun = bool(re.search(r",\s*(it|they|he|she|them|him|her)\b", s, flags=re.IGNORECASE))
+                words = s.split()
+                if not words:
+                    continue
 
-                if start_word in self.pronouns or end_word in self.pronouns or comma_pronoun:
+                start_word = words[0].lower()
+                end_word = words[-1].lower()
+
+                # condition 1: starts with pronoun
+                starts_with_pronoun = start_word in self.pronouns
+
+                # condition 2: ends with pronoun
+                ends_with_pronoun = end_word in self.pronouns
+
+                # condition 3: comma before pronoun
+                comma_pronoun = bool(
+                    re.search(r",\s*(it|they|he|she|them|him|her|its)\b", s, flags=re.IGNORECASE)
+                )
+
+                if starts_with_pronoun or ends_with_pronoun or comma_pronoun:
                     issue_count += 1
-                    # Highlight pronouns in red
                     highlighted = re.sub(
                         r'\b(it|they|them|he|she|him|her|its)\b',
                         r"<span style='color:red'>\1</span>",

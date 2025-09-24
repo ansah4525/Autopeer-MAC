@@ -1,69 +1,43 @@
 import re
 import spacy
-from typing import Dict
+from typing import Dict, List
 
 class UnclearThisIssueChecker:
-    def __init__(self):
-        self.exceptions = {
-            "study", "article", "method", "approach", "model", "paper", "research",
-            "process", "finding", "analysis", "framework", "concept", "result",
-            "idea", "theory", "section", "dataset", "issue", "evidence", "strategy",
-            "paragraph", "investigation", "task", "application", "number"
-        }
+    def __init__(self, exceptions_file: str = "exceptions.txt"):
+        # Load exceptions from file into a set
+        self.exceptions = self._load_exceptions(exceptions_file)
         self.this_counter = 0
-        self.flagged = []
+        self.flagged: List[str] = []
         self.nlp = spacy.load("en_core_web_sm")
 
-    def _contains_adverb_after_this(self, sentence: str) -> bool:
+    def _load_exceptions(self, filepath: str) -> set:
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                # strip each line and ignore empties
+                return {line.strip().lower() for line in f if line.strip()}
+        except FileNotFoundError:
+            print(f"[Warning] Exception file '{filepath}' not found. Using empty list.")
+            return set()
+
+    def _flag_conditions(self, sentence: str) -> bool:
+        """
+        Only flag if 'this' or 'these' is followed by a word:
+        - ≥5 letters
+        - ends with 's'
+        - not in exceptions
+        """
         doc = self.nlp(sentence)
         for i, token in enumerate(doc):
-            if token.lower_ == "this":
-                if i + 1 < len(doc) and doc[i + 1].pos_ == "ADV":
-                    return True
+            if token.lower_ in {"this"}:
+                if i + 1 < len(doc):
+                    next_word = doc[i + 1].text.lower()
+                    if (
+                        len(next_word) >= 5
+                        and next_word.endswith("s")
+                        and next_word not in self.exceptions
+                    ):
+                        return True
         return False
-
-    def _flag_conditions(self, sentence: str):
-        s = sentence.strip()
-        lower = s.lower()
-        doc = self.nlp(sentence)
-        for i, token in enumerate(doc):
-            if token.lower_ in {"this", "these"}:
-                if i + 1 < len(doc) and doc[i + 1].pos_ in {"NOUN", "PROPN"}:
-                    next_word = doc[i + 1].lemma_.lower()
-                    if next_word in self.exceptions:
-                        return (False, None)
-
-        if len(s.split()) > 30 and re.search(r'\bthis\b', lower):
-            return (True, "Very long sentence with 'this'")
-
-        patterns = {
-            r'\bthis\b[, ]+(shows|has|is|was|could|should|would|might|must|can|may|works|needs|demonstrates|suggests|displays|becomes|comes|means)': "Generic/weak verb after 'this'",
-            r'\bthis\b[,]': "This followed by a comma",
-            r'^[“"]?this\b': "Sentence starts with 'This'",
-            r'; this\b': "This after semicolon",
-            r'\bthis\b.+?(has|have|had) been': "This + passive verb ('been')",
-            r'\bthis\b.+?(has|have|had) not': "This + negation",
-            r'\bthis\b.+?(could|would|should|might|must) have': "This + modal verb ('could have', etc.)",
-            r"\b(however|thus|therefore|moreover|furthermore|consequently|additionally|alternatively|nonetheless|nevertheless),\s*this\b": "Transition + 'this'",
-            r'\bthis to\b': "This + 'to' (vague reference)",
-            r'\bovercome these\b': "Vague 'these'",
-            r'\blists these\b': "Lists + 'these'",
-            r'\bthis\b not only\b': "This + 'not only'"
-        }
-        for pat, reason in patterns.items():
-            if re.search(pat, lower):
-                return (True, reason)
-
-        if self._contains_adverb_after_this(sentence):
-            return (True, "Adverb immediately after 'this'")
-
-        match = re.search(r'\bthese\s+(\w+)', lower)
-        if match:
-            noun = match.group(1)
-            if noun not in self.exceptions:
-                return (True, f"Vague 'these' before '{noun}'")
-
-        return (False, None)
 
     def analyze_text(self, text: str) -> Dict[str, str]:
         self.this_counter = 0
@@ -74,26 +48,23 @@ class UnclearThisIssueChecker:
             sentences = re.split(r'(?<=[.!?])\s+', para)
             for s in sentences:
                 if "this" in s.lower() or "these" in s.lower():
-                    should_flag, reason = self._flag_conditions(s)
-                    if should_flag:
+                    if self._flag_conditions(s):
                         self.this_counter += 1
-                        # Highlight pronoun(s) red
+                        # highlight the this/these red
                         red_text = re.sub(
                             r'\b(this|these)\b',
                             r"<span style='color:red'>\1</span>",
                             s,
                             flags=re.IGNORECASE
                         )
-                        # Bold the paragraph containing the flagged sentence
-                        self.flagged.append(
-                            f"{self.this_counter}. <b>{para}</b><br>   → {red_text}<br>   → Reason: {reason}"
-                        )
+                        # add numbered, bold sentence only
+                        self.flagged.append(f"{self.this_counter}. <b>{red_text}</b>")
 
         if self.flagged:
             return {
                 "issues_found_counter": self.this_counter,
                 "issues_para": (
-                    "<b>Auto-Peer: Unclear #this/these# References</b><br><br>"
+                    "<b>Auto-Peer: Unclear this References</b><br><br>"
                     + "<br><br>".join(self.flagged)
                     + "<br><br>Click ‘Explanations’ on the Auto-Peer menu if you need further information."
                 ),

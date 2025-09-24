@@ -6,7 +6,7 @@ class FakeFriendsChecker_real:
 
         # Define fake friends
         self.fake_friends = [
-            "a lot", "I believe", "in my opinion", "I think", "think", "done", "due to",
+            "a lot", "I believe", "in my opinion", "I think", "done", "due to",
             "different", "different than", "huge", "prove", "proves", "proved", "proving",
             "proven", "disprove", "disproves", "disproved", "disproven", "mention",
             "mentioned", "mentions", "says", "states", "stated", "showcase", "showcased",

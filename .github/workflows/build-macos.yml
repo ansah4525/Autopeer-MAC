@@ -36,32 +36,32 @@ jobs:
           name: AutopeerMacApp-Intel
           path: dist/*.app
 
-  build-macos-arm:
-    runs-on: macos-latest  # Apple Silicon runner
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  # build-macos-arm:
+  #   runs-on: macos-latest  # Apple Silicon runner
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller
-          pip install -r requirements.txt
-          python -m spacy download en_core_web_sm
+  #     - name: Install dependencies
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install pyinstaller
+  #         pip install -r requirements.txt
+  #         python -m spacy download en_core_web_sm
 
-      - name: Build .app with PyInstaller (ARM)
-        run: |
-          pyinstaller --onefile --windowed \
-          --add-data "logologotype.jpg:." \
-          qt_template.py
+  #     - name: Build .app with PyInstaller (ARM)
+  #       run: |
+  #         pyinstaller --onefile --windowed \
+  #         --add-data "logologotype.jpg:." \
+  #         qt_template.py
 
-      - name: Upload ARM .app
-        uses: actions/upload-artifact@v4
-        with:
-          name: AutopeerMacApp-ARM
-          path: dist/*.app
+  #     - name: Upload ARM .app
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: AutopeerMacApp-ARM
+  #         path: dist/*.app
